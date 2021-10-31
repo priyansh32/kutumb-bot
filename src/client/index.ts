@@ -26,7 +26,7 @@ class ExtendedClient extends Client {
       );
 
       for (const file of commands) {
-        const command = await import(path.join(commandPath, dir, file));
+        const { command } = await import(path.join(commandPath, dir, file));
         this.commands.set(command.name, command);
 
         if (command?.aliases?.length > 0) {
@@ -37,8 +37,8 @@ class ExtendedClient extends Client {
 
     // Load events
     const eventPath = path.join(__dirname, "..", "events");
-    readdirSync(eventPath).forEach(async (dir) => {
-      const { event } = await import(path.join(eventPath, dir));
+    readdirSync(eventPath).forEach(async (file) => {
+      const { event } = await import(path.join(eventPath, file));
       this.events.set(event.name, event);
       console.log(`Loaded event: ${event.name}`);
       this.on(event.name, event.run.bind(null, this));

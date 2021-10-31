@@ -2,14 +2,10 @@ import { Event, Command } from "../interfaces";
 import { Message } from "discord.js";
 
 export const event: Event = {
-  name: "message",
+  name: "messageCreate",
   run: async (client, message: Message) => {
     console.log(message.content);
-    if (
-      message.author.bot ||
-      message.guild ||
-      !message.content.startsWith(client.config.prefix)
-    )
+    if (message.author.bot || !message.content.startsWith(client.config.prefix))
       return;
     const args = message.content
       .slice(client.config.prefix.length)
