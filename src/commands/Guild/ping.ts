@@ -1,16 +1,22 @@
-import { Command } from "../../interfaces";
+// import { Command } from "../../interfaces";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { Interaction } from "discord.js";
 
-export const command: Command = {
-  name: "ping",
-  description: "Ping the bot",
-  usage: "pinging the bot",
-  aliases: ["pong"],
-  run: async (client, message, args) => {
-    const m = await message.channel.send("Pinging...");
-    m.edit(
-      `Pong! Latency is ${
-        m.createdTimestamp - message.createdTimestamp
-      }ms. API Latency is ${Math.round(client.ws.ping)}ms`
-    );
-  },
+async function execute(client, interaction: Interaction, args) {
+  if (!interaction.isCommand()) return;
+  await interaction.reply({ content: "Pinging" });
+  let m = await interaction.channel.send("...");
+  m.edit(
+    `Pong! Latency is ${
+      m.createdTimestamp - interaction.createdTimestamp
+    }ms. API Latency is ${Math.round(client.ws.ping)}ms`
+  );
+  interaction.editReply("Done");
+}
+
+export default {
+  data: new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("pings the API"),
+  execute,
 };

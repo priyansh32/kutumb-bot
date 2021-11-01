@@ -9,8 +9,9 @@ class ExtendedClient extends Client {
   public events = new Collection();
   public config: Config = {
     token: process.env.TOKEN,
+    guild: process.env.GUILD_ID,
+    clientId: process.env.CLIENT_ID,
     mongoURI: process.env.MONGO_URI,
-    prefix: "!",
   };
   public aliases: Collection<string, Command> = new Collection();
 
@@ -21,17 +22,13 @@ class ExtendedClient extends Client {
     // Load commands
     const commandPath = path.join(__dirname, "..", "commands");
     readdirSync(commandPath).forEach(async (dir) => {
-      const commands = readdirSync(path.join(commandPath, dir)).filter((file) =>
-        file.endsWith(".ts")
+      const commandFiles = readdirSync(path.join(commandPath, dir)).filter(
+        (file) => file.endsWith(".ts")
       );
 
-      for (const file of commands) {
-        const { command } = await import(path.join(commandPath, dir, file));
-        this.commands.set(command.name, command);
-
-        if (command?.aliases?.length > 0) {
-          command.aliases.forEach((alias) => this.aliases.set(alias, command));
-        }
+      for (const file of commandFiles) {
+        const command = require(path.join(commandPath, dir, file)).default;
+        this.commands.set(command.data.name, command);
       }
     });
 
