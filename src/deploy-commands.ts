@@ -1,19 +1,17 @@
-import { readdirSync } from "fs";
-import path = require("path");
+import { readdirSync } from 'fs';
+import path = require('path');
 
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 
-const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
+const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
-let commands: object[] = [];
+const commands: object[] = [];
 
-const commandPath = path.join(__dirname, "commands");
+const commandPath = path.join(__dirname, 'commands');
 console.log(commandPath);
 readdirSync(commandPath).forEach(async (dir) => {
-  const commandFiles = readdirSync(path.join(commandPath, dir)).filter((file) =>
-    file.endsWith(".ts")
-  );
+  const commandFiles = readdirSync(path.join(commandPath, dir)).filter((file) => file.endsWith('.ts'));
 
   for (const file of commandFiles) {
     const command = require(path.join(commandPath, dir, file)).default;
@@ -26,12 +24,12 @@ readdirSync(commandPath).forEach(async (dir) => {
         // Routes.applicationCommands(process.env.CLIENT_ID),
         Routes.applicationGuildCommands(
           process.env.CLIENT_ID,
-          process.env.GUILD_ID
+          process.env.GUILD_ID,
         ),
-        { body: commands }
+        { body: commands },
       );
 
-      console.log("Successfully registered application commands.");
+      console.log('Successfully registered application commands.');
     } catch (error) {
       console.error(error);
     }

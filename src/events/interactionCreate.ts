@@ -1,8 +1,8 @@
-import { Event, Command } from "../interfaces";
-import { Interaction } from "discord.js";
+import { Interaction } from 'discord.js';
+import { Event, Command } from '../interfaces';
 
 export const event: Event = {
-  name: "interactionCreate",
+  name: 'interactionCreate',
   run: async (client, interaction: Interaction) => {
     if (interaction.isCommand()) {
       const command = client.commands.get(interaction.commandName);
@@ -13,7 +13,7 @@ export const event: Event = {
       } catch (error) {
         console.error(error);
         await interaction.reply({
-          content: "There was an error while executing this command!",
+          content: 'There was an error while executing this command!',
           ephemeral: true,
         });
       }

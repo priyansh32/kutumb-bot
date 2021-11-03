@@ -1,18 +1,21 @@
-import { Client, Collection } from "discord.js";
-import * as path from "path";
-import { readdirSync } from "fs";
-import { Command, Event, Config } from "../interfaces";
-import { connect } from "mongoose";
+import { Client, Collection } from 'discord.js';
+import * as path from 'path';
+import { readdirSync } from 'fs';
+import { connect } from 'mongoose';
+import { Command, Config } from '../interfaces';
 
 class ExtendedClient extends Client {
   public commands = new Collection();
+
   public events = new Collection();
+
   public config: Config = {
     token: process.env.TOKEN,
     guild: process.env.GUILD_ID,
     clientId: process.env.CLIENT_ID,
     mongoURI: process.env.MONGO_URI,
   };
+
   public aliases: Collection<string, Command> = new Collection();
 
   public async init() {
@@ -20,20 +23,20 @@ class ExtendedClient extends Client {
     connect(this.config.mongoURI, {});
 
     // Load commands
-    const commandPath = path.join(__dirname, "..", "commands");
+    const commandPath = path.join(__dirname, '..', 'commands');
     readdirSync(commandPath).forEach(async (dir) => {
       const commandFiles = readdirSync(path.join(commandPath, dir)).filter(
-        (file) => file.endsWith(".ts")
+        (file) => file.endsWith('.ts'),
       );
 
-      for (const file of commandFiles) {
+      commandFiles.forEach((file) => {
         const command = require(path.join(commandPath, dir, file)).default;
         this.commands.set(command.data.name, command);
-      }
+      });
     });
 
     // Load events
-    const eventPath = path.join(__dirname, "..", "events");
+    const eventPath = path.join(__dirname, '..', 'events');
     readdirSync(eventPath).forEach(async (file) => {
       const { event } = await import(path.join(eventPath, file));
       this.events.set(event.name, event);
